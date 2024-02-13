@@ -1,0 +1,14 @@
+include "charmap.inc"
+
+def VRAM_TILE_BLOCK_0 equ $8000
+def VRAM_TILE_BLOCK_1 equ $8800
+def VRAM_TILE_BLOCK_2 equ $9000
+
+def DISPLAY_ROWS equ 18
+def DISPLAY_COLUMNS equ 20
+
+def TILEMAP_ROWS equ 32
+def TILEMAP_COLUMNS equ 32
+
+def VRAM_SCREEN_0 equ $9800
+def VRAM_SCREEN_1 equ $9C00
