@@ -10,7 +10,8 @@ ROM_TITLE := "mini balloons"
 SOURCE_DIR := source
 INCLUDE_DIR := include
 BUILD_DIR := build
-RESOURCE_DIR := res
+RESOURCE_DIR := resource
+
 # -- Commands --
 RGBDS ?= # possible custom root
 ASM := $(RGBDS)rgbasm
