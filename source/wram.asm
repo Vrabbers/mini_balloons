@@ -1,4 +1,4 @@
 section "Global WRAM variables", wram0
 
-wwFrameCounter:: dw
+wFrameCounter:: db
 wGameState:: db
