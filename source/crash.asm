@@ -2,16 +2,18 @@ include "hardware.inc"
 include "macros.inc"
 
 section "Crash", rom0
-CrashHandler:
-    ld bc, $0000
+CrashHandler::
+    ld b, b
     call BusyVBlankWait
+    ld sp, $fffe ; set sp to good value
+
+    ld b, $01
+    ld c, b ; x=1, y=1
     ld hl, .text
     call PrintText
-    ld b, b
-    di
-:   halt ; halts processor
-    nop
-    jr :-
 
-.text:
+    di 
+    jr @ ; halt execution
+
+.text
     db "rst $38", 0

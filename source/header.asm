@@ -1,4 +1,5 @@
 include "macros.inc"
+include "hardware.inc"
 
 section "Software interrupts", rom0[$00]
     ds $38 - @, $ff
@@ -23,8 +24,7 @@ section "Joypad interrupt handler", rom0[$60]
     rst $38
 
 section "Header", rom0[$0100]
-Header:
+    ; ld b, b
     jp Init
 
     ds $150 - @, $00 ; Leave space for header
-

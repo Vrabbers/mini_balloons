@@ -1,3 +1,2 @@
 section "HRAM Variables", hram
-hwFrameCounter: dw
-
+hMainDone:: db

@@ -19,7 +19,7 @@ GFX := $(RGBDS)rgbgfx
 LINK := $(RGBDS)rgblink
 FIX := $(RGBDS)rgbfix
 
-ASMFLAGS := --export-all -Wall
+ASMFLAGS := -Wall
 LINKFLAGS := --tiny --wramx --sym $(BUILD_DIR)/$(NAME).sym --map $(BUILD_DIR)/$(NAME).map -p 0xff
 FIXFLAGS := --validate --mbc-type ROM_ONLY --pad-value 0xff --title $(ROM_TITLE)
 GFX_2BPP_FLAGS :=
