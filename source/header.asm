@@ -8,7 +8,8 @@ section "rst $38 handler", rom0[$38]
         jp CrashHandler
 
 section "VBlank interrupt handler", rom0[$40]
-        jp VBlankHandler
+        call VBlankHandler
+        reti
 
 ; All other interrupts should just crash
 section "STAT interrupt handler", rom0[$48]

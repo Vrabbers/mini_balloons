@@ -3,26 +3,29 @@ include "macros.inc"
 
 section "Video", rom0
 
-VBlankHandler::
-        ldh a, [hMainDone]
-        or a
-        jr z, .end ; main is not done, end
-
-.mainDone
-        ; main is done, do everything we need to now.
-        ld a, [wGameState]
-        or a ; cp GAME_STATE_TITLESCREEN
-        call z, TitleScreenVBlank
-        jr .end
-.end:
-        reti
-
+; note: disables interrupts
+DisableLCD::
+        di
+        call BusyVBlankWait
+        xor a
+        ldh [rLCDC], a ; disable lcd in vblank
+        ret
 
 ;; Waits for VBlank with a busy loop
 BusyVBlankWait::
         ldh a, [rLY]
         cp a, 144
         jr c, BusyVBlankWait
+        ret
+
+SoftVBlankWait::
+        halt
+        nop
+        ldh a, [hWasVBlankInterrupt]
+        or a
+        jr z, SoftVBlankWait ; wasn't vblank interrupt
+        xor a
+        ldh [hWasVBlankInterrupt], a
         ret
 
 ; Copy font to appropriate place in VRAM

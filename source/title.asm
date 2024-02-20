@@ -19,7 +19,7 @@ InitializeTitleScreen::
 
         ; Turn lcd back on
         ld a, LCDCF_ON | LCDCF_BGON
-        ld [rLCDC], a
+        ldh [rLCDC], a
 
         ei
         ld a, IEF_VBLANK
@@ -31,7 +31,11 @@ InitializeTitleScreen::
         ret
 
 TitleScreenLoop::
-        ret
+        ldh a, [hJoypadPressed]
+        cp JOYPAD_START
+        ret nz ; return on no start
+        call DisableLCD
+        jp InitializeGame
 
 TitleScreenVBlank::
         ld a, [wFrameCounter]
@@ -48,7 +52,7 @@ TitleScreenVBlank::
 .prEmpty
         ld hl, .empty
 .cont
-        ld bc, $1001
+        ld bc, $0b01
         call PrintText
 
 .noPrint

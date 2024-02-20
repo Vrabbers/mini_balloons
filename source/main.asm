@@ -4,10 +4,9 @@ include "macros.inc"
 section "Main", rom0
 
 Init::
-        di
-        call BusyVBlankWait
+        call DisableLCD
+
         xor a
-        ldh [rLCDC], a ; disable lcd in vblank
         ld [rAUDENA], a ; Disable audio
 
         ld bc, $a000 - $8000
@@ -18,9 +17,10 @@ Init::
         ld hl, $c000
         call Memset ; Clear WRAM
 
-        ld bc, $fffc - $ff80
+        ld c, $fffc - $ff80
         ld hl, $ff80
         call Memset ; Clear HRAM (except return address)
+
         call CopyFont
 
         call InitializeTitleScreen ; initialize title screen state
@@ -33,13 +33,35 @@ Main::
         ld a, [wGameState]
         or a
         call z, TitleScreenLoop
+        jr :+
+        cp GAME_STATE_GAME
+        call z, GameLoop
 
+:
         ld a, 1
         ldh [hMainDone], a
 
-        halt
-        nop
-        ;increment wFrameCounter
+        call SoftVBlankWait
+
         ld hl, wFrameCounter
         inc [hl]
         jr Main
+
+VBlankHandler::
+        ld a, 1
+        ldh [hWasVBlankInterrupt], a
+        ldh a, [hMainDone]
+        or a
+        ret z ; main is not done, end
+
+.mainDone
+        ; main is done, do everything we need to now.
+        ld a, [wGameState]
+        or a ; cp GAME_STATE_TITLESCREEN
+        call z, TitleScreenVBlank
+        jr :+
+        cp GAME_STATE_GAME
+        call z, GameVBlank
+
+:
+        ret
