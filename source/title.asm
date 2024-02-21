@@ -25,8 +25,15 @@ InitializeTitleScreen::
         ld a, IEF_VBLANK
         ldh [rIE], a ; Enable VBlank interrupt
 
-        ld hl, wGameState
-        ld [hl], GAME_STATE_TITLESCREEN
+        ld hl, wwMainCallback
+        ld [hl], low(TitleScreenLoop)
+        inc hl
+        ld [hl], high(TitleScreenLoop)
+
+        ld hl, wwVBlankCallback
+        ld [hl], low(TitleScreenVBlank)
+        inc hl
+        ld [hl], high(TitleScreenVBlank)
 
         ret
 
@@ -52,7 +59,7 @@ TitleScreenVBlank::
 .prEmpty
         ld hl, .empty
 .cont
-        ld bc, $0b01
+        ld bc, $0d01
         call PrintText
 
 .noPrint

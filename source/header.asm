@@ -25,6 +25,6 @@ section "Joypad interrupt handler", rom0[$60]
         rst $38
 
 section "Header", rom0[$0100]
-        jp Init
+        jp Main
 
         ds $150 - @, $00 ; Leave space for header

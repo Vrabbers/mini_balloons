@@ -3,7 +3,7 @@ include "macros.inc"
 
 section "Main", rom0
 
-Init::
+Main::
         call DisableLCD
 
         xor a
@@ -25,43 +25,48 @@ Init::
 
         call InitializeTitleScreen ; initialize title screen state
 
-        ; FALLTHROUGH to Main
+        ; FALLTHROUGH to MainLoop
 
-Main::
+MainLoop::
         call ReadJoypad
 
-        ld a, [wGameState]
-        or a
-        call z, TitleScreenLoop
-        jr :+
-        cp GAME_STATE_GAME
-        call z, GameLoop
-
-:
+        ld hl, wwMainCallback
+        ld a, [hli]
+        ld e, a
+        ld d, [hl]
+        ld h, d
+        ld l, e
+        ld de, .cont
+        push de
+        jp hl
+.cont
         ld a, 1
-        ldh [hMainDone], a
+        ld [wMainDone], a
 
         call SoftVBlankWait
 
         ld hl, wFrameCounter
         inc [hl]
-        jr Main
+        jr MainLoop
 
 VBlankHandler::
         ld a, 1
-        ldh [hWasVBlankInterrupt], a
-        ldh a, [hMainDone]
+        ld [wWasVBlankInt], a
+        ld a, [wMainDone]
         or a
         ret z ; main is not done, end
 
 .mainDone
         ; main is done, do everything we need to now.
-        ld a, [wGameState]
-        or a ; cp GAME_STATE_TITLESCREEN
-        call z, TitleScreenVBlank
-        jr :+
-        cp GAME_STATE_GAME
-        call z, GameVBlank
+        ld hl, wwVBlankCallback
+        ld a, [hli]
+        ld e, a
+        ld d, [hl]
+        ld h, d
+        ld l, e
+        ld de, .cont
+        push de
+        jp hl
 
-:
+.cont
         ret

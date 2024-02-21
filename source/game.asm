@@ -24,8 +24,15 @@ InitializeGame::
         ld a, IEF_VBLANK
         ldh [rIE], a
 
-        ld hl, wGameState
-        ld [hl], GAME_STATE_GAME
+        ld hl, wwMainCallback
+        ld [hl], low(GameLoop)
+        inc hl
+        ld [hl], high(GameLoop)
+
+        ld hl, wwVBlankCallback
+        ld [hl], low(GameVBlank)
+        inc hl
+        ld [hl], high(GameVBlank)
         ret
 
 GameLoop::

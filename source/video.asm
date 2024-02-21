@@ -21,11 +21,11 @@ BusyVBlankWait::
 SoftVBlankWait::
         halt
         nop
-        ldh a, [hWasVBlankInterrupt]
+        ld a, [wWasVBlankInt]
         or a
         jr z, SoftVBlankWait ; wasn't vblank interrupt
         xor a
-        ldh [hWasVBlankInterrupt], a
+        ld [wWasVBlankInt], a
         ret
 
 ; Copy font to appropriate place in VRAM
@@ -97,3 +97,4 @@ section "Font data", rom0
 FontTiles:
 incbin "font.2bpp"
 .end
+
