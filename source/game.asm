@@ -2,7 +2,6 @@ include "hardware.inc"
 include "constants.inc"
 
 section "Game", rom0
-
 InitializeGame::
         ld a, %11_10_01_00
         ldh [rBGP], a ; set palette

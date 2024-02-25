@@ -1,13 +1,15 @@
 include "hardware.inc"
 include "constants.inc"
+include "macros.inc"
 
 section "Main", rom0
-
 Main::
         call DisableLCD
 
         xor a
         ld [rAUDENA], a ; Disable audio
+        ld [wMainDone], a
+        ld [wFrameCounter], a
 
         ld bc, $a000 - $8000
         ld hl, $8000
@@ -24,6 +26,9 @@ Main::
         ; FALLTHROUGH to MainLoop
 
 MainLoop::
+        xor a
+        ld [wMainDone], a
+
         call ReadJoypad
 
         ld hl, wwMainCallback

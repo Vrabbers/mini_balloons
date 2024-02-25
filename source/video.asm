@@ -2,7 +2,6 @@ include "hardware.inc"
 include "constants.inc"
 
 section "Video", rom0
-
 ; note: disables interrupts
 DisableLCD::
         di

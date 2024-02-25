@@ -2,28 +2,29 @@ include "constants.inc"
 include "hardware.inc"
 
 ; Unused interrupts crash (rst $38).
-section "Software interrupts", rom0[$00]
+section "Software Interrupts", rom0[$00]
         ds $38 - @, $ff
 
-section "rst $38 handler", rom0[$38]
+section "Software Interrupt $38 Handler", rom0[$38]
         jp CrashHandler
 
-section "VBlank interrupt handler", rom0[$40]
+section "VBlank Interrupt Handler", rom0[$40]
         jp VBlankHandler
 
-section "STAT interrupt handler", rom0[$48]
+section "STAT Interrupt Handler", rom0[$48]
         rst $38
 
-section "Timer interrupt handler", rom0[$50]
+section "Timer Interrupt Handler", rom0[$50]
         rst $38
 
-section "Serial interrupt handler", rom0[$58]
+section "Serial Interrupt Handler", rom0[$58]
         rst $38
 
-section "Joypad interrupt handler", rom0[$60]
+section "Joypad Interrupt Handler", rom0[$60]
         rst $38
 
 section "Header", rom0[$0100]
+Entry:
         jp Main
 
         ds $150 - @, $00 ; Leave space for header

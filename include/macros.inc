@@ -1,8 +1,8 @@
 if !def(MACROS_INC)
 def MACROS_INC equ 1
 
-; COORDS reg16, x, y
-macro COORDS
+; coords reg16, x, y
+macro coords
         ld \1, $9800 + (\3 * 32) + \2
 endm
 

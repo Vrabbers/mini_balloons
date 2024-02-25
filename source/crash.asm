@@ -8,7 +8,7 @@ CrashHandler::
 
         ld sp, $fffe ; set sp to good value
         call BusyVBlankWait
-        COORDS de, $01, $01
+        coords de, $01, $01
         ld hl, .text
         call PrintText
 
@@ -17,4 +17,3 @@ CrashHandler::
 
 .text
         db "bonkers!", 0
-

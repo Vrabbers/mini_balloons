@@ -75,7 +75,7 @@ TitleScreenVBlank::
 .prEmpty
         ld hl, .empty
 .cont
-        COORDS de, $01, $0e
+        coords de, $01, $0e
         call PrintText
 .doFade
         ld a, [wFade]
