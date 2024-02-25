@@ -1,5 +1,5 @@
 include "hardware.inc"
-include "macros.inc"
+include "constants.inc"
 
 section "Game", rom0
 
@@ -20,7 +20,6 @@ InitializeGame::
         ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
         ldh [rLCDC], a
 
-        ei
         ld a, IEF_VBLANK
         ldh [rIE], a
 
@@ -33,7 +32,7 @@ InitializeGame::
         ld [hl], low(GameVBlank)
         inc hl
         ld [hl], high(GameVBlank)
-        ret
+        reti
 
 GameLoop::
         ret

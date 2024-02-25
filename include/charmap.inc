@@ -1,3 +1,6 @@
+if !def(CHARMAP_INC)
+def CHARMAP_INC equ 1
+
 newcharmap internal
 charmap "0", $d0
 charmap "1", $d1
@@ -53,3 +56,5 @@ charmap ",", $f8
 charmap ":", $f9
 charmap "?", $fa
 charmap "$", $fb
+
+endc ; if !def(CHARMAP_INC)

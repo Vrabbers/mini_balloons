@@ -1,6 +1,7 @@
-include "macros.inc"
+include "constants.inc"
 include "hardware.inc"
 
+; Unused interrupts crash (rst $38).
 section "Software interrupts", rom0[$00]
         ds $38 - @, $ff
 
@@ -8,10 +9,8 @@ section "rst $38 handler", rom0[$38]
         jp CrashHandler
 
 section "VBlank interrupt handler", rom0[$40]
-        call VBlankHandler
-        reti
+        jp VBlankHandler
 
-; All other interrupts should just crash
 section "STAT interrupt handler", rom0[$48]
         rst $38
 

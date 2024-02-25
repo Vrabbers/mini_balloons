@@ -1,26 +1,9 @@
-include "charmap.inc"
+if !def(MACROS_INC)
+def MACROS_INC equ 1
 
-def VRAM_TILE_BLOCK_0 equ $8000
-def VRAM_TILE_BLOCK_1 equ $8800
-def VRAM_TILE_BLOCK_2 equ $9000
+; COORDS reg16, x, y
+macro COORDS
+        ld \1, $9800 + (\3 * 32) + \2
+endm
 
-def DISPLAY_ROWS equ 18
-def DISPLAY_COLUMNS equ 20
-
-def TILEMAP_ROWS equ 32
-def TILEMAP_COLUMNS equ 32
-
-def VRAM_SCREEN_0 equ $9800
-def VRAM_SCREEN_1 equ $9C00
-
-def GAME_STATE_TITLESCREEN equ $00
-def GAME_STATE_GAME equ $01
-
-def JOYPAD_DOWN equ %1000_0000
-def JOYPAD_UP equ %0100_0000
-def JOYPAD_LEFT equ %0010_0000
-def JOYPAD_RIGHT equ %0001_0000
-def JOYPAD_START equ %0000_1000
-def JOYPAD_SELECT equ %0000_0100
-def JOYPAD_B equ %0000_0010
-def JOYPAD_A equ %0000_0001
+endc ; if !def(MACROS_INC)

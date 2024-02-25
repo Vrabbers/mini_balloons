@@ -53,7 +53,7 @@ $(BUILD_DIR)/$(ROM_FILE_NAME): $(OBJECT_FILES)
 	$(SHH)$(FIX) $(FIXFLAGS) $@
 	@echo $@ done.
 
-$(BUILD_DIR)/%.o: %.asm $(RES_2BPP_OUTS) $(RES_MAP_OUTS)
+$(BUILD_DIR)/%.o: %.asm $(RES_2BPP_OUTS) $(RES_MAP_OUTS) $(BUILD_DIR)/resource/font.1bpp
 	$(SHH)mkdir -p $(@D)
 	$(SHH)$(ASM) $(ASMFLAGS) --include $(BUILD_RES_DIR) --include $(INCLUDE_DIR) --dependfile $(@:%.o=%.d) --output $@ $<
 	@echo assembled $<
@@ -63,13 +63,17 @@ $(BUILD_DIR)/%.2bpp: %.2bpp.png
 	$(SHH)$(GFX) $(GFX_2BPP_FLAGS) --output $@ $<
 	@echo converted $<
 
-
 $(BUILD_DIR)/%.map.time: %.map.png
 	$(SHH)mkdir -p $(@D)
 	$(SHH)$(GFX) $(GFX_MAP_FLAGS) --tilemap $(@:%.map.time=%.map) --output $(@:%.map.time=%.2bpp) $< && \
 	touch $@ && \
 	if [ $$(du -b $(@:%.map.time=%.2bpp) | cut -f 1) -gt 2048 ]; \
 		then echo "warning: $*.map.png produced $(@:%.map.time=%.2bpp) that is larger than a 128-tile VRAM block."; fi
+	@echo converted $<
+
+$(BUILD_DIR)/resource/font.1bpp: $(RESOURCE_DIR)/font.1bpp.png
+	$(SHH)mkdir -p $(@D)
+	$(SHH)$(GFX) -d 1 --output $@ $<
 	@echo converted $<
 
 clean:

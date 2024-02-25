@@ -1,4 +1,5 @@
 include "hardware.inc"
+include "constants.inc"
 include "macros.inc"
 
 section "Crash", rom0
@@ -7,8 +8,7 @@ CrashHandler::
 
         ld sp, $fffe ; set sp to good value
         call BusyVBlankWait
-        ld b, $01
-        ld c, b ; x=1, y=1
+        COORDS de, $01, $01
         ld hl, .text
         call PrintText
 
@@ -16,5 +16,5 @@ CrashHandler::
         jr @ ; halt execution
 
 .text
-        db "rst $38 crash", 0
+        db "bonkers!", 0
 

@@ -1,5 +1,12 @@
 section "Memory", rom0
 
+; Calls routine pointed at by HL.
+AtHL::
+        ld a, [hli]
+        ld h, [hl]
+        ld l, a
+        jp hl ; tail call
+
 ; Copies bc bytes from hl to de
 Memcpy::
         ld a, c

@@ -1,5 +1,5 @@
 include "hardware.inc"
-include "macros.inc"
+include "constants.inc"
 
 section "Video", rom0
 
@@ -30,26 +30,30 @@ SoftVBlankWait::
 
 ; Copy font to appropriate place in VRAM
 CopyFont::
-        ld hl, FontTiles
+        ld de, FontTiles
         ld bc, FontTiles.end - FontTiles
-        ld de, VRAM_TILE_BLOCK_2 - (16 * 16 * 3) ; at the end of block 1
+        ld hl, VRAM_TILE_BLOCK_2 - (16 * 16 * 3) ; at the end of block 1
                                                  ; 16 bytes per tile * 16 columns * 3 rows
-        jp Memcpy
-
-; Prints null-terminated string at hl at position bc
-PrintText::
-        push hl
-        call CalculateVramPos
-        pop de
-.loop
+.loop:  ld a, c
+        or a, b 
+        ret z ; End when bc is 0
         ld a, [de]
-        or a ;check 0
-        ret z
-        inc de
         ld [hli], a
+        ld [hli], a ; makes 1bpp font data into 2bpp
+        inc de
+        dec bc
         jr .loop
 
-CalculateVramPos:
+; Prints null-terminated string from hl to memory at de
+PrintText::
+        ld a, [hli]
+        or a ;check 0
+        ret z
+        ld [de], a
+        inc de
+        jr PrintText
+
+CalculateVramPos::
         ld d, $00
         ld a, b
 
@@ -95,6 +99,6 @@ CopyScreenData::
 
 section "Font data", rom0
 FontTiles:
-incbin "font.2bpp"
+incbin "font.1bpp"
 .end
 

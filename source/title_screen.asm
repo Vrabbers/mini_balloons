@@ -1,11 +1,17 @@
 include "hardware.inc"
+include "constants.inc"
 include "macros.inc"
 
-section "Title screen", rom0
+section "Title Screen Variables", wram0
+wFade: db
 
+section "Title Screen", rom0
 InitializeTitleScreen::
         ld a, %11_10_01_00
         ldh [rBGP], a ; set palette
+
+        ld a, -15
+        ld [wFade], a ; start fade timer
 
         ; Copy tiles over
         ld hl, TitleScreenTiles
@@ -21,7 +27,6 @@ InitializeTitleScreen::
         ld a, LCDCF_ON | LCDCF_BGON
         ldh [rLCDC], a
 
-        ei
         ld a, IEF_VBLANK
         ldh [rIE], a ; Enable VBlank interrupt
 
@@ -35,23 +40,34 @@ InitializeTitleScreen::
         inc hl
         ld [hl], high(TitleScreenVBlank)
 
-        ret
+        reti ; return and enable interrupts
+        ; only enable interrupts after the vblank callback has been properly set!
 
 TitleScreenLoop::
+        ld a, [wFade]
+        or a
+        jr nz, .fade ; fade counter is not 0, go to fade routine
         ldh a, [hJoypadPressed]
         cp JOYPAD_START
-        ret nz ; return on no start
+        ret nz ; no start, done
+        ld a, 1
+        ld [wFade], a ; start fade animation timer
+        ret
+.fade
+        ; we have wFade on a
+        cp 15
+        jr z, .endTitleScreen
+        inc a
+        ld [wFade], a
+        ret
+.endTitleScreen
         call DisableLCD
         jp InitializeGame
 
+
 TitleScreenVBlank::
         ld a, [wFrameCounter]
-        ld b, a
-        and %0001_1111
-        jr nz, .noPrint
-
         ; print "START! or clear it"
-        ld a, b
         bit 5, a
         jr nz, .prEmpty
         ld hl, .pressStart
@@ -59,10 +75,27 @@ TitleScreenVBlank::
 .prEmpty
         ld hl, .empty
 .cont
-        ld bc, $0d01
+        COORDS de, $01, $0e
         call PrintText
-
-.noPrint
+.doFade
+        ld a, [wFade]
+        or a
+        bit 7, a
+        jr z, :+
+        cpl ; if wFade is negative, make it positive
+        inc a
+:
+        sra a
+        and %0000_0110 ; a / 4 * 2 without lsb
+        ld b, %11_10_01_00
+        jr z, .endLoop ; handle 0 case. z flag is still set from and up there
+.loop
+        sla b
+        dec a
+        jr nz, .loop
+.endLoop
+        ld a, b
+        ldh [rBGP], a
         ret
 .pressStart
         db "start!", 0
