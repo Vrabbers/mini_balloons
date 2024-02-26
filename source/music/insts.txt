@@ -1,0 +1,60 @@
+song commands
+=============
+these are at first read as LE words, starting after the header.
+
+0xxx xxxx xxxx xxxx (x4)
+pointers measure data for the 4 channels.
+
+- jump where -
+1000 0000 jjjj jjjj
+jjjj jjjj: signed relative offset to other song data (i.e. measure commands), for looping songs
+
+- waveptr n, ptr -
+1100 00ww llll llll (read extra byte) HHHH HHHH
+ww: wave no to assign to
+HHll: pointer to wave data
+
+measure commands
+================
+
+16bit commands
+--------------
+
+- n period - note
+1000 0PPP pppp pppp
+PPP_pppp_pppp: APU period
+
+- nn 7/15, shift, divider -
+same opcode as n.
+
+- len length - note length
+1100 0000 llll llll
+llll_llll: length of notes in ticks
+
+- env up/down, speed, volume - envelopy
+1010 0000 eeee eeee
+eeee_eeee: value written to envelope register
+
+8 bit commands
+--------------
+
+- duty 12/25/50/75 - duty
+0100 00dd
+dd: value written to duty register
+
+- wave 0-3 - wave
+0010 00ww
+ww: wave to be selected from wave bank (in header)
+
+- wv 100/50/25/0 - wave volume
+0110 00vv
+vv: volume written to bits 6..5 of rNR32
+
+- end - end
+0000 0000
+terminate measure. if these all dont land on the same tick, this ends up halting playback until eveyone else is on board
+
+f = 131072 / (2048 - p)
+2048 - p = 131072 / f
+- p = (131072 / f) - 2048
+p = 2048 - (131072/f)

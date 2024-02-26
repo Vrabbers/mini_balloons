@@ -43,7 +43,7 @@ InitializeTitleScreen::
         reti ; return and enable interrupts
         ; only enable interrupts after the vblank callback has been properly set!
 
-TitleScreenLoop::
+TitleScreenLoop:
         ld a, [wFade]
         or a
         jr nz, .fade ; fade counter is not 0, go to fade routine
@@ -65,7 +65,7 @@ TitleScreenLoop::
         jp InitializeGame
 
 
-TitleScreenVBlank::
+TitleScreenVBlank:
         ld a, [wFrameCounter]
         ; print "START! or clear it"
         bit 5, a

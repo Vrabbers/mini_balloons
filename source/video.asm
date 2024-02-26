@@ -18,13 +18,13 @@ BusyVBlankWait::
         ret
 
 SoftVBlankWait::
-        halt
+        xor a
+        ld [wWasVBlankInt], a
+:       halt
         nop
         ld a, [wWasVBlankInt]
         or a
-        jr z, SoftVBlankWait ; wasn't vblank interrupt
-        xor a
-        ld [wWasVBlankInt], a
+        jr z, :- ; wasn't vblank interrupt, try again
         ret
 
 ; Copy font to appropriate place in VRAM

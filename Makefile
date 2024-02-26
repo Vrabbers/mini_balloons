@@ -27,7 +27,7 @@ GFX_MAP_FLAGS := --unique-tiles
 SHH ?= @
 
 # Find sources
-SOURCE_FILES := $(shell find $(SOURCE_DIR) -name '*.asm')
+SOURCE_FILES := $(shell find $(SOURCE_DIR) -name '*.asm' | sort -)
 OBJECT_FILES := $(SOURCE_FILES:%.asm=$(BUILD_DIR)/%.o)
 DEPS_FILES := $(OBJECT_FILES:%.o=%.d)
 
