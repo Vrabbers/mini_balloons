@@ -10,9 +10,13 @@ section "Silly Song Data", rom0
 SillySong::
         waveptr 0, .wave0
 .loop
-        dw .m1c1, .m1c2, .m1c3, .null
-        dw .m2c1, .m2c2, .m2c3, .null
+        measure 1, 2, 3, 0
+        measure 4, 5, 6, 0
         jump .loop
+        endsong
+
+.measureptrs
+dw .null, .m1c1, .m1c2, .m1c3, .m2c1, .m2c2, .m2c3
 
 .wave0
         db $00, $00, $00, $00, $00, $00, $00, $00, $00

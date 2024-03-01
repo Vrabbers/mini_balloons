@@ -1,18 +1,22 @@
 song commands
 =============
-these are at first read as LE words, starting after the header.
 
-0xxx xxxx xxxx xxxx (x4)
-pointers measure data for the 4 channels.
+0xxx xxxx 0xxx xxx 0xxx xxxx 0xxx xxxx
+measure ids (indices to measure ptr table)
 
-- jump where -
 1000 0000 jjjj jjjj
-jjjj jjjj: signed relative offset to other song data (i.e. measure commands), for looping songs
+jump JJ
+relative jump (for looping)
 
-- waveptr n, ptr -
-1100 00ww llll llll (read extra byte) HHHH HHHH
-ww: wave no to assign to
-HHll: pointer to wave data
+1100 00ww llll llll hhhh hhhh
+waveptr HHLL
+
+endsong
+1111 1111
+end data (start measure pointer table)
+should not be found during playback!
+
+then follows a measure pointer table
 
 measure commands
 ================

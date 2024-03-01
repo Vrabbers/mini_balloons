@@ -21,6 +21,10 @@ Main::
 
         call CopyFont
 
+        ld b, b
+        ld hl, SillySong
+        call MusicInit
+
         call InitializeTitleScreen ; initialize title screen state
 
         ; FALLTHROUGH to MainLoop
