@@ -33,9 +33,9 @@ static_assert high(\1) <= 7
         db MEASURE_N_OPCODE | high(\1), low(\1)
 endm
 
-def MESAURE_LEN_OPCODE equ %1100_0000
+def MEASURE_LEN_OPCODE equ %1100_0000
 macro len
-        db MESAURE_LEN_OPCODE, \1
+        db MEASURE_LEN_OPCODE, \1
 endm
 
 def MEASURE_8BIT_MASK equ %1111_1100

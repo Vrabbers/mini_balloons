@@ -29,7 +29,7 @@ measure commands
 PPP_pppp_pppp: APU period
 
 - nn 7/15, shift, divider -
-same opcode as n.
+same opcode as n, process operands
 
 - len length - note length
 1100 0000 llll llll

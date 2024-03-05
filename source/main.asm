@@ -49,6 +49,9 @@ MainLoop::
 
 VBlankHandler::
         push af
+        push bc
+        push de
+        push hl
         ld a, [wMainDone]
         or a
         jr z, .end ; main is not done, end
@@ -60,5 +63,10 @@ VBlankHandler::
 .end
         ld a, 1
         ld [wWasVBlankInt], a
+        call MusicMeasuresDoTick
+        call MusicSongDoTick
+        pop hl
+        pop de
+        pop bc
         pop af
         reti

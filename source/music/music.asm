@@ -51,11 +51,20 @@ MusicInit::
         ld [wwSongMeasuresTablePtr], a
         ld a, h
         ld [wwSongMeasuresTablePtr + 1], a
+        
+        xor a
+        ld hl, wLengthCounters
+        ld [hli], a
+        ld [hli], a
+        ld [hli], a
+        ld [hli], a ; zero out length counters for proper MusicMeasuresDoTick
 
         ; tail call
-        jp MusicSongDoTick.doCommands ; skip the part where it verifies that all channels have stopped.
+        jr MusicSongDoTick.doCommands ; skip the part where it verifies that all channels have stopped.
 
-MusicSongDoTick:
+
+
+MusicSongDoTick::
         ld c, 4 * 2
         ld hl, wwSongMeasuresPCs
         xor a
@@ -144,3 +153,85 @@ MusicSongDoTick:
         ld [hli], a
         ld [hl], b
         ret
+
+
+MusicMeasuresDoTick::
+        ld c, 0
+.mainLoop
+        ld h, high(wLengthCounters)
+        ld a, low(wLengthCounters)
+        add a, c
+        ld l, a
+.nextChannel
+        ld a, [hl]
+        or a
+        jr z, .continue ; length counter is zero means we need to process this measure
+        dec [hl] ; if not we decrement the length counter
+        inc c ; increment which channel
+        ld a, c
+        cp 4 ; if it's 4,
+        ret z ; we're done
+        inc l ; not 4, go again
+        jr .nextChannel
+.continue
+        ld a, low(wwSongMeasuresPCs)
+        add a, c
+        add a, c ; pointer offset without clobbering c
+        ld l, a ; holds pointer to entry in wwSongMeasuresPCs
+        push hl ; save this for later
+        ld a, [hli]
+        ld h, [hl]
+        ld l, a
+        or h
+        jr z, .endCommand ; if the entry is 0000, ignore channel
+        ; hl holds what is at the entry
+.doCommandLoop
+        ld a, [hli]
+        bit 7, a
+        jr z, .byteCommand
+        ; fallthrough
+.wordCommand
+        ld b, [hl]
+        inc hl
+        cp MEASURE_LEN_OPCODE
+        jr z, .len
+; fallthrough to note
+.note
+        ld d, high(wNoteLengths)
+        ld a, low(wNoteLengths)
+        add a, c
+        ld e, a
+        ld a, [de] ; de = wNoteLengths + c
+        ldh [hScratch], a ; save for later
+        ld a, low(wLengthCounters)
+        add a, c
+        ld e, a
+        ldh a, [hScratch]
+        ld [de], a ; de = wLengthCounters + c
+        jr .endChannel
+.len
+        ld d, high(wNoteLengths)
+        ld a, low(wNoteLengths)
+        add a, c
+        ld e, a
+        ld a, b
+        ld [de], a
+        jr .doCommandLoop
+.byteCommand
+        or a ; zero
+        jr z, .endCommand
+        jr .doCommandLoop
+.endCommand
+        ld hl, 0
+        jr .endChannel
+.endChannel
+        ld a, l
+        ld b, h
+        pop hl ; pops pointer to wwSongMeasurePCs pushed earlier
+        ld [hli], a
+        ld [hl], b
+        inc c
+        ld a, 4
+        cp c
+        jr nz, .mainLoop
+        ret ; no more channels to process
