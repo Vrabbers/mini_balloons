@@ -54,6 +54,9 @@ ww: wave to be selected from wave bank (in header)
 0110 00vv
 vv: volume written to bits 6..5 of rNR32
 
+- r - rest
+0000 0001
+
 - end - end
 0000 0000
 terminate measure. if these all dont land on the same tick, this ends up halting playback until eveyone else is on board

@@ -9,6 +9,6 @@ wwVBlankCallback:: dw
 wWasVBlankInt:: db
 
 section "Global HRAM Variables", hram
-hScratch:: ds 1
+hScratch:: ds 8
 hJoypad:: db
 hJoypadPressed:: db

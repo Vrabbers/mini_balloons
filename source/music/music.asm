@@ -154,7 +154,9 @@ MusicSongDoTick::
         ld [hl], b
         ret
 
-
+def hCurChannelOffset equs "hScratch"
+def hLengthScratch equs "hScratch + 1"
+def hCommandScratch equs "hScratch + 2"
 MusicMeasuresDoTick::
         ld c, 0
 .mainLoop
@@ -174,6 +176,13 @@ MusicMeasuresDoTick::
         inc l ; not 4, go again
         jr .nextChannel
 .continue
+        ld a, c
+        add a
+        add a ; a = c * 4
+        add a, c ; a = c * 4 + c = c * 5
+        add a, low(rNR10)
+        ldh [hCurChannelOffset], a ; store the low byte of the address of the first relevant register of the channel we're processing
+
         ld a, low(wwSongMeasuresPCs)
         add a, c
         add a, c ; pointer offset without clobbering c
@@ -197,17 +206,25 @@ MusicMeasuresDoTick::
         jr z, .len
 ; fallthrough to note
 .note
-        ld d, high(wNoteLengths)
-        ld a, low(wNoteLengths)
-        add a, c
-        ld e, a
-        ld a, [de] ; de = wNoteLengths + c
-        ldh [hScratch], a ; save for later
-        ld a, low(wLengthCounters)
-        add a, c
-        ld e, a
-        ldh a, [hScratch]
-        ld [de], a ; de = wLengthCounters + c
+        ldh [hCommandScratch], a
+        ; b saved
+        call .setLengthCounter
+        ldh a, [hCommandScratch]
+        ld e, b
+        ld d, a
+
+        ld b, c ; save channel no for later
+
+        ldh a, [hCurChannelOffset]
+        add a, 3 ; get period low from offset
+        ld c, a
+        ld a, e
+        ldh [$ff00+c], a ;rNRx3
+        ld a, d
+        inc c
+        ld [$ff00+c], a ;rNRx4, already has high bit set so it already triggers
+
+        ld c, b ; restore channel
         jr .endChannel
 .len
         ld d, high(wNoteLengths)
@@ -220,9 +237,14 @@ MusicMeasuresDoTick::
 .byteCommand
         or a ; zero
         jr z, .endCommand
+        cp MEASURE_R_OPCODE
+        jr z, .rCommand
         jr .doCommandLoop
 .endCommand
         ld hl, 0
+        jr .endChannel
+.rCommand
+        call .setLengthCounter
         jr .endChannel
 .endChannel
         ld a, l
@@ -235,3 +257,17 @@ MusicMeasuresDoTick::
         cp c
         jr nz, .mainLoop
         ret ; no more channels to process
+.setLengthCounter
+        ld d, high(wNoteLengths)
+        ld a, low(wNoteLengths)
+        add a, c
+        ld e, a
+        ld a, [de] ; de = wNoteLengths + c
+        ldh [hLengthScratch], a ; save for later
+        ld a, low(wLengthCounters)
+        add a, c
+        ld e, a
+        ldh a, [hLengthScratch]
+        ld [de], a ; de = wLengthCounters + c
+        ret
+.registerBases

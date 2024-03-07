@@ -35,7 +35,7 @@ endm
 
 def MEASURE_LEN_OPCODE equ %1100_0000
 macro len
-        db MEASURE_LEN_OPCODE, \1
+        db MEASURE_LEN_OPCODE, \1 - 1
 endm
 
 def MEASURE_8BIT_MASK equ %1111_1100
@@ -53,6 +53,9 @@ else
         fail "invalid duty cycle"
 endc
 endm
+
+def MEASURE_R_OPCODE equ %0000_0001
+def r equs "db MEASURE_R_OPCODE"
 
 def MEASURE_WAVE_OPCODE equ %0010_0000
 macro wave

@@ -7,7 +7,7 @@ Main::
         call DisableLCD
 
         xor a
-        ld [rAUDENA], a ; Disable audio
+        ldh [rNR52], a ; Disable audio
         ld [wMainDone], a
         ld [wFrameCounter], a
 
@@ -24,6 +24,20 @@ Main::
         ld b, b
         ld hl, SillySong
         call MusicInit
+
+        ld a, $80
+        ldh [rNR52], a
+        ldh [rNR11], a
+        ldh [rNR21], a
+        ldh [rNR30], a
+        ld a, $7f
+        ldh [rNR51], a
+        ld a, $77
+        ldh [rNR50], a
+        ld a, $f0
+        ldh [rNR12], a
+        ldh [rNR22], a
+        ldh [rNR32], a
 
         call InitializeTitleScreen ; initialize title screen state
 
