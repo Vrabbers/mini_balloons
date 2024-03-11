@@ -11,6 +11,10 @@ relative jump (for looping)
 1100 00ww llll llll hhhh hhhh
 waveptr HHLL
 
+1010 0000 0lll 0rrr
+mvol l, r
+master volume
+
 endsong
 1111 1111
 end data (start measure pointer table)
@@ -35,7 +39,7 @@ same opcode as n, process operands
 1100 0000 llll llll
 llll_llll: length of notes in ticks
 
-- env up/down, speed, volume - envelopy
+- env volume, up/down, speed - envelopy
 1010 0000 eeee eeee
 eeee_eeee: value written to envelope register
 
@@ -50,7 +54,7 @@ dd: value written to duty register
 0010 00ww
 ww: wave to be selected from wave bank (in header)
 
-- wv 100/50/25/0 - wave volume
+- wvol 3-0 - wave volume
 0110 00vv
 vv: volume written to bits 6..5 of rNR32
 

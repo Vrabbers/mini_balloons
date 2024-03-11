@@ -1,22 +1,30 @@
 include "music_commands.inc"
 
 def grace equ 3
-def sixteenth equ 7
+def sixteenth equ 8
 def eigth equ sixteenth * 2
 def quarter equ eigth * 2
 def half equ quarter * 2
 def whole equ half * 2
 
 section "Silly Song Data", rom0
+
 SillySong::
         waveptr 0, .wave0
-        measure 01, 02, 03, 00
+        mvol 7, 7
+        measure 01, 02, 16, 00
 .loop
+        mvol 5, 7
         measure 04, 05, 06, 00
+        mvol 7, 5
         measure 07, 08, 03, 00
+        mvol 5, 7
         measure 04, 09, 06, 00
+        mvol 7, 5
         measure 07, 08, 03, 00
+        mvol 5, 7
         measure 10, 11, 12, 00
+        mvol 7, 5
         measure 13, 14, 15, 00
         jump .loop
         endsong
@@ -28,22 +36,27 @@ SillySong::
         dw .fig3pulse2 ; 9
         dw .fig4pulse1, .fig4pulse2, .lowGWave ; 10, 11, 12
         dw .fig5pulse1, .fig5pulse2, .highGWave ; 13, 14, 15
+        dw .lowAWaveIntro ; 16
 
 .introPulse1
-        duty 50
+        env 7, up, 1
+        duty 75
         len half
         r
         n C4
         end
 .introPulse2
+        env 5, up, 1
         duty 50
         len quarter
         r
         len quarter + half
         n E3
         end
-.lowAWave
+.lowAWaveIntro
         wave 0
+        wvol 1
+.lowAWave
         len whole
         n A3
         end
@@ -155,5 +168,5 @@ SillySong::
         end
 
 .wave0
-        db $00, $00, $00, $00, $00, $00, $00, $00, $00
-        db $77, $77, $77, $77, $77, $77, $77, $77, $77
+        db $89, $ab, $cd, $ef, $ff, $ff, $ff, $e9
+        db $71, $00, $00, $00, $01, $23, $45, $67
